@@ -1,0 +1,583 @@
+<!DOCTYPE html>                                      
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Geometrický filtr podobnosti</title>
+  <style>
+ 
+    body {
+  
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+   
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Geometrický filtr podobnosti</h1>
+</header>
+<details>
+  <summary style="cursor: pointer; color: #0056b3; font-weight: bold; padding: 10px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9; margin-bottom: 20px;">
+    ▶ Click here to read the English version / Klikněte pro zobrazení anglické verze
+  </summary>
+  <div style="padding: 15px; border-left: 3px solid #0056b3; margin-top: 10px;">
+  <h1 id="geometric-similarity-as-a-structural-filter">Geometric
+Similarity as a Structural Filter</h1>
+<h2 id="geometrická-podobnost-jako-strukturální-filtr">Geometrická
+podobnost jako strukturální filtr</h2>
+<h3 id="final-unified-czech-english-publication-version">Final unified
+Czech + English publication version</h3>
+<hr />
+<h1 id="english-version">ENGLISH VERSION</h1>
+<h2 id="geometric-similarity-as-a-heuristic-filter">Geometric Similarity
+as a Heuristic Filter:</h2>
+<h3 id="a-visual-interpretation-related-to-the-equation-xn-yn-zn">A
+Visual Interpretation Related to the Equation x^n + y^n = z^n</h3>
+<p><strong>Author:</strong> Vladimír Rosenzweig</p>
+<hr />
+<p>weig</p>
+<h2 id="abstract">Abstract</h2>
+<p>We present a geometric and visual interpretation related to the
+equation</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20x%5En%20%2B%20y%5En%20%3D%20z%5En%2C"
+alt="x^n + y^n = z^n," title="x^n + y^n = z^n,"
+class="math display" /></p>
+<p>one of the central objects in number theory.</p>
+<p>The approach is based on similarity properties of right triangles
+whose side lengths encode power-law growth. The model highlights a
+structural distinction between the quadratic case (n=2) and higher
+powers (n&gt;2).</p>
+<p>For (n=2), nontrivial similarity is preserved under scaling. For
+higher powers, the corresponding geometric configuration exhibits
+structural rigidity.</p>
+                                    
+  <div class="separator" style="clear: both;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgGmKARRvWzHjPSw_wJ3p_hqH31rpt8D7kvWPw8LfIN25-hIqRb9wGfDS9R8FIMs_hFwSswfumpVHFGRBWScYiaQcSHd7UPBYbhjg__at4qJMHk4YapFuFA6rrJEXd7zC_wEKHiOo5OR3lfC1V1jWiOVRDycpi5vx9RKDizrX56u05kQbPTf1WkRGnuWGw/s1200/n=2_n=3.png" style="display: block; padding: 1em 0; text-align: center; "><img alt="" border="0" width="600" data-original-height="500" data-original-width="1200" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgGmKARRvWzHjPSw_wJ3p_hqH31rpt8D7kvWPw8LfIN25-hIqRb9wGfDS9R8FIMs_hFwSswfumpVHFGRBWScYiaQcSHd7UPBYbhjg__at4qJMHk4YapFuFA6rrJEXd7zC_wEKHiOo5OR3lfC1V1jWiOVRDycpi5vx9RKDizrX56u05kQbPTf1WkRGnuWGw/s600/n=2_n=3.png"/></a></div>
+<p>The work is intended as a heuristic and visual interpretation. It
+does not constitute a formal proof of Fermat’s Last Theorem.</p>
+<hr />
+<h1 id="introduction">1. Introduction</h1>
+<p>Fermat’s Last Theorem states that for integers (n&gt;2), the
+equation</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20x%5En%2By%5En%3Dz%5En"
+alt="x^n+y^n=z^n" title="x^n+y^n=z^n" class="math display" /></p>
+<p>has no nontrivial integer solutions.</p>
+<p>The theorem was proven by Andrew Wiles in 1995.</p>
+<p>The present work does not attempt to provide a new proof. Instead, it
+proposes a geometric interpretation based on right triangles and
+geometric similarity.</p>
+<p>The main idea is to encode power growth into geometric structures and
+study how similarity behaves for different exponents.</p>
+<hr />
+<h1 id="geometric-model">2. Geometric Model</h1>
+<p>We define a family of right triangles:</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20a%3Dt%2C"
+alt="a=t," title="a=t," class="math display" /></p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20b%3D2t%5E%7Bn-1%7D."
+alt="b=2t^{n-1}." title="b=2t^{n-1}." class="math display" /></p>
+<p>The area is</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20S%3D%5Cfrac12ab%3Dt%5En."
+alt="S=\frac12ab=t^n." title="S=\frac12ab=t^n."
+class="math display" /></p>
+<p>Thus, the exponent (n) is encoded geometrically through the area.</p>
+<p>The model may also be interpreted through accelerated motion:</p>
+<ul>
+<li>for (n=2), the structure resembles uniformly accelerated
+motion,</li>
+<li>for (n&gt;2), the scaling becomes nonlinear.</li>
+</ul>
+<hr />
+<h1 id="similarity-analysis">3. Similarity Analysis</h1>
+<p>Consider two triangles:</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20T%3D%28t%2C2t%5E%7Bn-1%7D%29%2C"
+alt="T=(t,2t^{n-1})," title="T=(t,2t^{n-1}),"
+class="math display" /></p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20T%27%3D%28s%2C2s%5E%7Bn-1%7D%29."
+alt="T&#39;=(s,2s^{n-1})." title="T&#39;=(s,2s^{n-1})."
+class="math display" /></p>
+<p>Similarity requires:</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5Cfrac%7Bs%7D%7Bt%7D%3D%5Cfrac%7B2s%5E%7Bn-1%7D%7D%7B2t%5E%7Bn-1%7D%7D."
+alt="\frac{s}{t}=\frac{2s^{n-1}}{2t^{n-1}}."
+title="\frac{s}{t}=\frac{2s^{n-1}}{2t^{n-1}}."
+class="math display" /></p>
+<p>Setting</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5Cfrac%7Bs%7D%7Bt%7D%3Dk%2C"
+alt="\frac{s}{t}=k," title="\frac{s}{t}=k," class="math display" /></p>
+<p>we obtain</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20k%5E%7Bn-1%7D%3Dk."
+alt="k^{n-1}=k." title="k^{n-1}=k." class="math display" /></p>
+<p>Hence:</p>
+<ul>
+<li>for (n=2), similarity holds for arbitrary scaling,</li>
+<li>for (n&gt;2), only the trivial solution (k=1) remains.</li>
+</ul>
+<p>This is interpreted as a transition from geometric flexibility to
+structural rigidity.</p>
+<hr />
+<h1 id="geometric-decomposition">4. Geometric Decomposition</h1>
+<p>A central idea of the model is the decomposition of geometric
+structures into smaller right triangles.</p>
+<p>For (n=2), scaling relations remain compatible and preserve
+similarity.</p>
+<p>For (n&gt;2), the nonlinear relation between the sides destroys this
+compatibility.</p>
+<p>The key point is not area equality alone. Different non-similar
+triangles may possess equal total area.</p>
+<p>The model instead concerns the compatibility of scaling
+structures.</p>
+<hr />
+<h1 id="deviation-function">5. Deviation Function</h1>
+<p>Define</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20r%3D%5Cfrac%7Bs%7D%7Bt%7D%2C%20%5Cquad%200%3Cr%3C1%2C"
+alt="r=\frac{s}{t}, \quad 0&lt;r&lt;1,"
+title="r=\frac{s}{t}, \quad 0&lt;r&lt;1," class="math display" /></p>
+<p>and</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5CDelta%28n%29%3D%7Cr-r%5E%7Bn-1%7D%7C."
+alt="\Delta(n)=|r-r^{n-1}|." title="\Delta(n)=|r-r^{n-1}|."
+class="math display" /></p>
+<p>Properties:</p>
+<ul>
+<li>((2)=0),</li>
+<li>((n)&gt;0) for (n&gt;2),</li>
+<li>((n)) is increasing,</li>
+<li>((n)) is concave,</li>
+<li>(_{n}(n)=r).</li>
+</ul>
+<p>The quantity ((n)) measures the loss of similarity.</p>
+
+  <div class="separator" style="clear: both;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQeNHhxSqccpDzAroBN5HTMWFtQ0CBSNgboaBX2C_BDnj2lypNNUhbT-1DMb8ZxcD0dOxViccAYIDEOhZ68yOXFfLF-ZaqRCDGyjo-xhY4sJCoYPeRed6pUyiS33zkeXgskKYlCMKwgtkNhyuGqWsWT7IyrjpzuGvK4SgQr9xfk12RmrKaEANsGZEFHJ0/s600/n=2.png" style="display: block; padding: 1em 0; text-align: center; "><img alt="" border="0" width="600" data-original-height="400" data-original-width="600" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQeNHhxSqccpDzAroBN5HTMWFtQ0CBSNgboaBX2C_BDnj2lypNNUhbT-1DMb8ZxcD0dOxViccAYIDEOhZ68yOXFfLF-ZaqRCDGyjo-xhY4sJCoYPeRed6pUyiS33zkeXgskKYlCMKwgtkNhyuGqWsWT7IyrjpzuGvK4SgQr9xfk12RmrKaEANsGZEFHJ0/s600/n=2.png"/></a></div>
+  
+                     
+  <hr />
+<h1 id="main-theorem">6. Main Theorem</h1>
+<h2 id="theorem-geometric-structural-rigidity">Theorem (Geometric
+Structural Rigidity)</h2>
+<p>Within the proposed geometric model, the quadratic case (n=2) is the
+unique exponent for which nontrivial similarity is preserved under
+scaling.</p>
+<p>For higher powers (n&gt;2), the induced geometric structures exhibit
+persistent deviation from similarity, quantified by the function</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5CDelta%28n%29%3D%7Cr-r%5E%7Bn-1%7D%7C."
+alt="\Delta(n)=|r-r^{n-1}|." title="\Delta(n)=|r-r^{n-1}|."
+class="math display" /></p>
+<p>Consequently, scaling-based decompositions cease to remain
+geometrically compatible in the same sense as in the quadratic case.</p>
+<hr />
+<h2 id="proof">Proof</h2>
+<p>Similarity requires</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20k%5E%7Bn-1%7D%3Dk."
+alt="k^{n-1}=k." title="k^{n-1}=k." class="math display" /></p>
+<p>For (n=2), this holds for arbitrary (k).</p>
+<p>For (n&gt;2), the equation reduces to</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20k%5E%7Bn-2%7D%3D1%2C"
+alt="k^{n-2}=1," title="k^{n-2}=1," class="math display" /></p>
+<p>whose only positive real solution is</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20k%3D1."
+alt="k=1." title="k=1." class="math display" /></p>
+<p>Thus, nontrivial similarity collapses for higher powers.</p>
+<p>The deviation function</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5CDelta%28n%29%3D%7Cr-r%5E%7Bn-1%7D%7C"
+alt="\Delta(n)=|r-r^{n-1}|" title="\Delta(n)=|r-r^{n-1}|"
+class="math display" /></p>
+<p>quantifies this structural loss.</p>
+<hr />
+<h1 id="rectangular-interpretation">7. Rectangular Interpretation</h1>
+<p>An alternative version of the model may be formulated using
+rectangles.</p>
+<p>For</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20a%3Dt%2C"
+alt="a=t," title="a=t," class="math display" /></p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20b%3Dt%5E%7Bn-1%7D%2C"
+alt="b=t^{n-1}," title="b=t^{n-1}," class="math display" /></p>
+<p>we obtain for (n=2):</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20a%3Db%3Dt%2C"
+alt="a=b=t," title="a=b=t," class="math display" /></p>
+<p>which produces a square.</p>
+<p>Thus, similarity appears naturally through equality of scaling and
+preservation of proportions.</p>
+<p>For (n&gt;2), the relation becomes nonlinear and the geometric
+compatibility is lost.</p>
+<hr />
+<h1 id="conclusion">8. Conclusion</h1>
+<p>The proposed model provides a geometric interpretation of the
+structural distinction between the quadratic case and higher powers.</p>
+<p>The transition from similarity preservation to rigidity is quantified
+analytically through the function ((n)).</p>
+<p>The work is intended as a heuristic geometric framework and not as a
+formal proof.</p>
+<hr />
+<h1 id="references">References</h1>
+<p>[1] A. Wiles, Modular elliptic curves and Fermat’s Last Theorem,
+Annals of Mathematics 141 (1995), 443–551.</p>
+<p>[2] P. Ribenboim, Fermat’s Last Theorem for Amateurs, Springer.</p>
+<p>[3] G. H. Hardy, E. M. Wright, An Introduction to the Theory of
+Numbers.</p>
+<p>[4] K. Ireland, M. Rosen, A Classical Introduction to Modern Number
+Theory.</p>
+<hr />                      
+<hr />
+
+    </div>
+</details>
+    
+    
+    <h1 id="česká-verze">ČESKÁ VERZE</h1>
+<h2 id="geometrická-podobnost-jako-heuristický-filtr">Geometrická
+podobnost jako heuristický filtr:</h2>
+<h3 id="vizuální-interpretace-související-s-rovnicí-xn-yn-zn">Vizuální
+interpretace související s rovnicí x^n + y^n = z^n</h3>
+<p><strong>Autor:</strong> Vladimír Rosenzweig</p>
+<hr />
+<h2 id="abstrakt">Abstrakt</h2>
+<p>Předkládáme geometrickou a vizuální interpretaci rovnice</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20x%5En%2By%5En%3Dz%5En%2C"
+alt="x^n+y^n=z^n," title="x^n+y^n=z^n," class="math display" /></p>
+<p>která patří mezi centrální objekty teorie čísel.</p>
+<p>Přístup je založen na vlastnostech podobnosti pravoúhlých
+trojúhelníků, jejichž odvěsny kódují mocninný růst.</p>
+<p>Model ukazuje strukturální rozdíl mezi kvadratickým případem (n=2) a
+vyššími mocninami (n&gt;2).</p>
+<p>Pro (n=2) je zachována netriviální podobnost při škálování. Pro vyšší
+mocniny se geometrická struktura stává rigidní.</p>
+<p>Práce je zamýšlena jako heuristická a vizuální interpretace a
+nepředstavuje formální důkaz Fermatovy poslední věty.</p>
+<hr />
+<h1 id="úvod">1. Úvod</h1>
+<p>Fermatova poslední věta říká, že pro celá čísla (n&gt;2) nemá
+rovnice</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20x%5En%2By%5En%3Dz%5En"
+alt="x^n+y^n=z^n" title="x^n+y^n=z^n" class="math display" /></p>
+<p>netriviální celočíselná řešení.</p>
+<p>Větu dokázal Andrew Wiles v roce 1995.</p>
+<p>Tato práce se nepokouší předložit nový důkaz. Místo toho navrhuje
+geometrickou interpretaci založenou na pravoúhlých trojúhelnících a
+geometrické podobnosti.</p>
+<p>Hlavní myšlenkou je zakódovat mocninný růst do geometrických struktur
+a sledovat, jak se mění podobnost pro různé exponenty.</p>
+<hr />
+<h1 id="geometrický-model">2. Geometrický model</h1>
+<p>Definujeme rodinu pravoúhlých trojúhelníků:</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20a%3Dt%2C"
+alt="a=t," title="a=t," class="math display" /></p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20b%3D2t%5E%7Bn-1%7D."
+alt="b=2t^{n-1}." title="b=2t^{n-1}." class="math display" /></p>
+<p>Obsah trojúhelníku je</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20S%3D%5Cfrac12ab%3Dt%5En."
+alt="S=\frac12ab=t^n." title="S=\frac12ab=t^n."
+class="math display" /></p>
+<p>Exponent (n) je tedy geometricky zakódován prostřednictvím
+obsahu.</p>
+<p>Model lze interpretovat také pomocí zrychleného pohybu:</p>
+<ul>
+<li>pro (n=2) připomíná rovnoměrně zrychlený pohyb,</li>
+<li>pro (n&gt;2) se škálování stává nelineárním.</li>
+</ul>                   
+<hr />
+<h1 id="analýza-podobnosti">3. Analýza podobnosti</h1>
+<p>Uvažujme dva trojúhelníky:</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20T%3D%28t%2C2t%5E%7Bn-1%7D%29%2C"
+alt="T=(t,2t^{n-1})," title="T=(t,2t^{n-1}),"
+class="math display" /></p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20T%27%3D%28s%2C2s%5E%7Bn-1%7D%29."
+alt="T&#39;=(s,2s^{n-1})." title="T&#39;=(s,2s^{n-1})."
+class="math display" /></p>
+<p>Podobnost vyžaduje:</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5Cfrac%7Bs%7D%7Bt%7D%3D%5Cfrac%7B2s%5E%7Bn-1%7D%7D%7B2t%5E%7Bn-1%7D%7D."
+alt="\frac{s}{t}=\frac{2s^{n-1}}{2t^{n-1}}."
+title="\frac{s}{t}=\frac{2s^{n-1}}{2t^{n-1}}."
+class="math display" /></p>
+<p>Položíme-li</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5Cfrac%7Bs%7D%7Bt%7D%3Dk%2C"
+alt="\frac{s}{t}=k," title="\frac{s}{t}=k," class="math display" /></p>
+<p>získáme</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20k%5E%7Bn-1%7D%3Dk."
+alt="k^{n-1}=k." title="k^{n-1}=k." class="math display" /></p>
+<p>Odtud plyne:</p>
+<ul>
+<li>pro (n=2) podobnost platí pro libovolné škálování,</li>
+<li>pro (n&gt;2) zůstává pouze triviální řešení (k=1).</li>
+</ul>
+<p>To interpretujeme jako přechod od geometrické flexibility ke
+strukturální rigiditě.</p>
+
+  <div class="separator" style="clear: both;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi0sri32zHVmlalIVCQS0aLsH8EYoia5q2eTAiBZ3LV1M-KeXExqNF6XweNFBbTa1t9uBozZv-Obqm_D1JiCZ3rbE4JZFPjq52aACGrWKDXqmS7qR2m9jWfNiLktra0GjYIxXur2DeUc5YVnRTc5t9ZqOtsDHqshIKYJL1le2yFhUxIusZLppgPV1Ueovc/s1200/n=2_n=3.png" style="display: block; padding: 1em 0; text-align: center; "><img alt="" border="0" width="600" data-original-height="500" data-original-width="1200" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi0sri32zHVmlalIVCQS0aLsH8EYoia5q2eTAiBZ3LV1M-KeXExqNF6XweNFBbTa1t9uBozZv-Obqm_D1JiCZ3rbE4JZFPjq52aACGrWKDXqmS7qR2m9jWfNiLktra0GjYIxXur2DeUc5YVnRTc5t9ZqOtsDHqshIKYJL1le2yFhUxIusZLppgPV1Ueovc/s600/n=2_n=3.png"/></a></div>
+  
+  <hr />   
+<h1 id="geometrický-rozklad">4. Geometrický rozklad</h1>
+<p>Hlavní myšlenkou modelu je rozklad geometrických struktur na menší
+pravoúhlé trojúhelníky.</p>
+<p>Pro (n=2) zůstávají škálovací vztahy kompatibilní a zachovávají
+podobnost.</p>
+<p>Pro (n&gt;2) nelineární vztah mezi odvěsnami tuto kompatibilitu
+narušuje.</p>
+<p>Klíčové je, že samotná rovnost obsahů nestačí. Různé nepodobné
+trojúhelníky mohou mít stejný celkový obsah.</p>
+<p>Model se proto nezabývá pouze obsahem, ale kompatibilitou škálovacích
+struktur.</p>
+<hr />
+<h1 id="funkce-odchylky">5. Funkce odchylky</h1>
+<p>Definujme</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20r%3D%5Cfrac%7Bs%7D%7Bt%7D%2C%20%5Cquad%200%3Cr%3C1%2C"
+alt="r=\frac{s}{t}, \quad 0&lt;r&lt;1,"
+title="r=\frac{s}{t}, \quad 0&lt;r&lt;1," class="math display" /></p>
+<p>a</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5CDelta%28n%29%3D%7Cr-r%5E%7Bn-1%7D%7C."
+alt="\Delta(n)=|r-r^{n-1}|." title="\Delta(n)=|r-r^{n-1}|."
+class="math display" /></p>
+<p>Platí:</p>
+<ul>
+<li>((2)=0),</li>
+<li>((n)&gt;0) pro (n&gt;2),</li>
+<li>((n)) je rostoucí,</li>
+<li>((n)) je konkávní,</li>
+<li>(_{n}(n)=r).</li>
+</ul>
+<p>Funkce ((n)) kvantifikuje ztrátu podobnosti.</p>
+
+  <div class="separator" style="clear: both;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgMje0Qo7QNWNSpZT-asH_ODCtYYM0QKpdXHEuF2HUYnRATPAf4k2WCDf5z_2uqoB0fIGzObex4wpahxisZ0pSdJsLvQcL961Oqs-IJmW5FGdgVfmOVpDuJ5ApP2gKsZ-FS0LjdZLcEgIuL6HTSdPGXbQdi2PEn8j9IFSUsEFHjARy8NhWIgTXGb8fm4vw/s600/n=2.png" style="display: block; padding: 1em 0; text-align: center; "><img alt="" border="0" width="600" data-original-height="400" data-original-width="600" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgMje0Qo7QNWNSpZT-asH_ODCtYYM0QKpdXHEuF2HUYnRATPAf4k2WCDf5z_2uqoB0fIGzObex4wpahxisZ0pSdJsLvQcL961Oqs-IJmW5FGdgVfmOVpDuJ5ApP2gKsZ-FS0LjdZLcEgIuL6HTSdPGXbQdi2PEn8j9IFSUsEFHjARy8NhWIgTXGb8fm4vw/s600/n=2.png"/></a></div>
+  <hr />
+<h1 id="hlavní-tvrzení">6. Hlavní tvrzení</h1>
+<h2 id="tvrzení-geometrická-strukturální-rigidita">Tvrzení (Geometrická
+strukturální rigidita)</h2>
+<p>V rámci navrženého geometrického modelu je případ (n=2) jediným
+exponentem, pro který je při škálování zachována netriviální
+podobnost.</p>
+<p>Pro vyšší mocniny (n&gt;2) vykazují geometrické struktury trvalou
+odchylku od podobnosti, kvantifikovanou funkcí</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5CDelta%28n%29%3D%7Cr-r%5E%7Bn-1%7D%7C."
+alt="\Delta(n)=|r-r^{n-1}|." title="\Delta(n)=|r-r^{n-1}|."
+class="math display" /></p>
+<p>Rozklady založené na proporčním škálování tak přestávají být
+geometricky kompatibilní stejným způsobem jako v kvadratickém
+případě.</p>
+<hr />
+<h2 id="důkaz">Důkaz</h2>
+<p>Podobnost vyžaduje</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20k%5E%7Bn-1%7D%3Dk."
+alt="k^{n-1}=k." title="k^{n-1}=k." class="math display" /></p>
+<p>Pro (n=2) tato rovnost platí pro libovolné (k).</p>
+<p>Pro (n&gt;2) se rovnice redukuje na</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20k%5E%7Bn-2%7D%3D1%2C"
+alt="k^{n-2}=1," title="k^{n-2}=1," class="math display" /></p>
+<p>jejímž jediným kladným řešením je</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20k%3D1."
+alt="k=1." title="k=1." class="math display" /></p>
+<p>Netriviální podobnost se tedy pro vyšší mocniny rozpadá.</p>
+<p>Funkce</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20%5CDelta%28n%29%3D%7Cr-r%5E%7Bn-1%7D%7C"
+alt="\Delta(n)=|r-r^{n-1}|" title="\Delta(n)=|r-r^{n-1}|"
+class="math display" /></p>
+<p>kvantifikuje tuto strukturální ztrátu.</p>
+<hr />
+<h1 id="obdélníková-interpretace">7. Obdélníková interpretace</h1>
+<p>Alternativní verzi modelu lze formulovat pomocí obdélníků.</p>
+<p>Pro</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20a%3Dt%2C"
+alt="a=t," title="a=t," class="math display" /></p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20b%3Dt%5E%7Bn-1%7D%2C"
+alt="b=t^{n-1}," title="b=t^{n-1}," class="math display" /></p>
+<p>získáme pro (n=2):</p>
+<p><img style="vertical-align:middle"
+src="https://latex.codecogs.com/png.latex?%5Cdisplaystyle%20a%3Db%3Dt%2C"
+alt="a=b=t," title="a=b=t," class="math display" /></p>
+<p>tedy čtverec.</p>
+<p>Podobnost zde vzniká přirozeně prostřednictvím rovnosti stran a
+zachování proporcí.</p>
+<p>Pro (n&gt;2) se vztah stává nelineárním a geometrická kompatibilita
+mizí.</p>
+<hr />
+<h1 id="závěr">8. Závěr</h1>
+<p>Navržený model poskytuje geometrickou interpretaci strukturálního
+rozdílu mezi kvadratickým případem a vyššími mocninami.</p>
+<p>Přechod od zachování podobnosti k rigiditě je analyticky popsán
+funkcí ((n)).</p>
+<p>Práce je zamýšlena jako heuristický geometrický rámec, nikoli jako
+formální důkaz.</p>
+<hr />
+<h1 id="literatura">Literatura</h1>
+<p>[1] A. Wiles, Modular elliptic curves and Fermat’s Last Theorem,
+Annals of Mathematics 141 (1995), 443–551.</p>
+<p>[2] P. Ribenboim, Fermat’s Last Theorem for Amateurs, Springer.</p>
+<p>[3] G. H. Hardy, E. M. Wright, An Introduction to the Theory of
+Numbers.</p>
+<p>[4] K. Ireland, M. Rosen, A Classical Introduction to Modern Number
+Theory.</p>
+</body>
+
+</html>
